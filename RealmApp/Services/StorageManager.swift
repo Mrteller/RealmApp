@@ -16,13 +16,13 @@ class StorageManager {
     private init() {}
     
     // MARK: - Task List
-    func save(_ taskLists: [TaskList]) {
+    func add(_ taskLists: [TaskList]) {
         try! realm.write {
             realm.add(taskLists)
         }
     }
     
-    func save(_ taskList: TaskList) {
+    func add(_ taskList: TaskList) {
         write {
             realm.add(taskList)
         }
@@ -30,7 +30,7 @@ class StorageManager {
     
     func delete(_ taskList: TaskList) {
         write {
-            realm.delete(taskList.tasks)
+            //realm.delete(taskList.tasks)
             realm.delete(taskList)
         }
     }
@@ -63,4 +63,19 @@ class StorageManager {
             print(error)
         }
     }
+}
+
+
+extension Results {
+    
+    public func sorted<S: Sequence>(byKeyPaths sortKeyPaths: S) -> Results<Element>
+    where S.Iterator.Element == PartialKeyPath<Element>, Element: ObjectBase {
+        sorted(by: sortKeyPaths.map { SortDescriptor(keyPath: $0) })
+    }
+    
+    public func sorted<S: Sequence>(byKeyPaths sortKeyPaths: S) -> Results<Element>
+    where S.Iterator.Element == (keyPath: PartialKeyPath<Element>, ascending: Bool), Element: ObjectBase {
+        sorted(by: sortKeyPaths.map { SortDescriptor(keyPath: $0.keyPath, ascending: $0.ascending) })
+    }
+    
 }

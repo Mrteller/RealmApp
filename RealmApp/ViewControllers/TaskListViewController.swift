@@ -10,12 +10,25 @@ import UIKit
 import RealmSwift
 
 class TaskListViewController: UITableViewController {
+    
+    @IBOutlet weak var sortBySegmentedControl: UISegmentedControl!
 
     var taskLists: Results<TaskList>!
     
+    private var notificationToken: NotificationToken?
+
+    private var sortProperties: [PartialKeyPath<TaskList>] = [\.date, \.name]
+    private var sortAscending = true
+    private var sortBy: PartialKeyPath<TaskList> {
+        sortProperties[sortBySegmentedControl.selectedSegmentIndex]
+    }
+    private var currentTasksPredicate = NSPredicate(format: "%K = %@", argumentArray: ["isComplete", false])
+    private var sortDirectionButtonItem: UIBarButtonItem!
+    //private var searchBar = UISearchBar()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        taskLists = StorageManager.shared.realm.objects(TaskList.self)
+        taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
         
         let addButton = UIBarButtonItem(
             barButtonSystemItem: .add,
@@ -23,15 +36,17 @@ class TaskListViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         
-        navigationItem.rightBarButtonItem = addButton
-        navigationItem.leftBarButtonItem = editButtonItem
+        sortDirectionButtonItem = UIBarButtonItem(
+            title: "↑",
+            style: .plain,
+            target: self,
+            action: #selector(sortButtonPressed)
+        )
         
-        createTempData()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tableView.reloadData()
+        navigationItem.rightBarButtonItems = [editButtonItem, addButton]
+        navigationItem.leftBarButtonItem = sortDirectionButtonItem
+        
+        DataManager.shared.createTempDataV2() { /* Nothing to do in completion. Updates are done via notification. */}
     }
     
     // MARK: - Table view data source
@@ -44,7 +59,8 @@ class TaskListViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
         content.text = taskList.name
-        content.secondaryText = "\(taskList.tasks.count)"
+        let currentTasksCount = taskList.tasks.filter(currentTasksPredicate).count
+        content.secondaryText = currentTasksCount == 0 ? "✓" : "\(currentTasksCount)"
         cell.contentConfiguration = content
         return cell
     }
@@ -55,19 +71,19 @@ class TaskListViewController: UITableViewController {
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(taskList)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+            //tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { _, _, isDone in
             self.showAlert(with: taskList) {
-                self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                // self.tableView.reloadRows(at: [indexPath], with: .automatic)
             }
             isDone(true)
         }
         
         let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
             StorageManager.shared.done(taskList)
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+            // tableView.reloadRows(at: [indexPath], with: .automatic)
             isDone(true)
         }
         
@@ -86,15 +102,47 @@ class TaskListViewController: UITableViewController {
     }
 
     @IBAction func sortingList(_ sender: UISegmentedControl) {
+        resortTaskLists()
     }
     
-    @objc private func  addButtonPressed() {
+    @objc private func addButtonPressed() {
         showAlert()
     }
     
-    private func createTempData() {
-        DataManager.shared.createTempDataV2 {
-            self.tableView.reloadData()
+    @objc private func sortButtonPressed() {
+        sortAscending.toggle()
+        resortTaskLists()
+    }
+    
+    private func resortTaskLists() {
+        sortDirectionButtonItem.title = sortAscending ? "↑" : "↓"
+        taskLists = taskLists.sorted(byKeyPaths: [(sortBy, sortAscending)])
+        tableView.reloadSections([0], with: .middle)
+    }
+    
+    
+    
+    private func observeChanges() {
+        notificationToken = taskLists.observe { [weak self] (changes) in
+            guard let tableView = self?.tableView else { return }
+            switch changes {
+            case .initial:
+                tableView.reloadData()
+            case .update(_, let deletions, let insertions, let modifications):
+                tableView.performBatchUpdates({
+                    // It's important to be sure to always update a table in this order:
+                    // deletions, insertions, then updates. Otherwise, you could be unintentionally
+                    // updating at the wrong index!
+                    tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
+                        with: .automatic)
+                    tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
+                        with: .automatic)
+                    tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
+                        with: .automatic)
+                })
+            case .error(let error):
+                fatalError("\(error)")
+            }
         }
     }
 }
@@ -119,7 +167,7 @@ extension TaskListViewController {
     
     private func save(taskList: String) {
         let taskList = TaskList(value: [taskList])
-        StorageManager.shared.save(taskList)
+        StorageManager.shared.add(taskList)
         
         let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
         tableView.insertRows(at: [rowIndex], with: .automatic)

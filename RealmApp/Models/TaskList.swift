@@ -12,11 +12,15 @@ class TaskList: Object {
     @Persisted var name = ""
     @Persisted var date = Date()
     @Persisted var tasks = List<Task>()
+    @Persisted(primaryKey: true) var id: ObjectId
 }
 
-class Task: Object {
+class Task: EmbeddedObject {
     @Persisted var name = ""
     @Persisted var note = ""
     @Persisted var date = Date()
     @Persisted var isComplete = false
+    @Persisted(originProperty: "tasks") var taskList: LinkingObjects<TaskList>
+    // EmbeddedObject with primary key crashes
+    // @Persisted(primaryKey: true) var id: ObjectId
 }

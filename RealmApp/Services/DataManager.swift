@@ -30,7 +30,7 @@ class DataManager {
             shoppingList.tasks.insert(contentsOf: [bread, apples], at: 0)
             
             DispatchQueue.main.async {
-                StorageManager.shared.save([shoppingList])
+                StorageManager.shared.add([shoppingList])
                 UserDefaults.standard.set(true, forKey: "Buzz")
                 completion()
             }

@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TaskListViewController: NotifiedTableViewController {
+class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
     
     // MARK: - @IBOutlets
     
@@ -28,6 +28,7 @@ class TaskListViewController: NotifiedTableViewController {
     }
     private var currentTasksPredicate = NSPredicate(format: "%K = %@", argumentArray: ["isComplete", false])
     private var sortDirectionButtonItem: UIBarButtonItem!
+    private var searchBar = UISearchBar()
     
     // MARK: - Lifecycle methods
     
@@ -35,6 +36,7 @@ class TaskListViewController: NotifiedTableViewController {
         super.viewDidLoad()
         taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
         observeChanges(taskLists)
+        
         let addButton = UIBarButtonItem(
             barButtonSystemItem: .add,
             target: self,
@@ -48,6 +50,13 @@ class TaskListViewController: NotifiedTableViewController {
             action: #selector(sortButtonPressed)
         )
         
+        searchBar.delegate = self
+        searchBar.searchBarStyle = .prominent
+        searchBar.placeholder = "Search..."
+        searchBar.isTranslucent = false
+        // searchBar.backgroundImage = UIImage()
+        
+        navigationItem.titleView = searchBar
         navigationItem.rightBarButtonItems = [editButtonItem, addButton]
         navigationItem.leftBarButtonItem = sortDirectionButtonItem
         
@@ -108,6 +117,16 @@ class TaskListViewController: NotifiedTableViewController {
     
     @IBAction func sortingList(_ sender: UISegmentedControl) {
         resortTaskLists()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
+        if !textSearched.isEmpty {
+            let predicate = NSPredicate(format:"name CONTAINS[c] %@", textSearched)
+            taskLists = StorageManager.shared.realm.objects(TaskList.self).filter(predicate).sorted(byKeyPaths: [(sortBy, sortAscending)])
+        } else {
+            taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
+        }
+        tableView.reloadData()
     }
     
     // MARK: - Private funcs

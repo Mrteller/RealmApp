@@ -23,14 +23,15 @@ class TasksViewController: UITableViewController {
     private var tasksByCategory: [Results<Task>] {
         [currentTasks, completedTasks]
     }
+    private var isCompletePredicate = NSPredicate(format: "%K = %@", argumentArray: ["isComplete", true])
     
     // MARK: - Lifecycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = taskList.name
-        currentTasks = taskList.tasks.filter("isComplete = false")
-        completedTasks = taskList.tasks.filter("isComplete = true")
+        currentTasks = taskList.tasks.filter(!isCompletePredicate)
+        completedTasks = taskList.tasks.filter(isCompletePredicate)
         
         let addButton = UIBarButtonItem(
             barButtonSystemItem: .add,

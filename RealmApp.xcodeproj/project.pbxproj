@@ -19,6 +19,7 @@
 		A872A12320E9D88E00ECE2BA /* TasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A872A12220E9D88E00ECE2BA /* TasksViewController.swift */; };
 		A8E78FE9241A76EE00E66973 /* AlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E78FE8241A76EE00E66973 /* AlertController+.swift */; };
 		DAB03BCF27A6B9AF00A12410 /* NotifiedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB03BCE27A6B9AF00A12410 /* NotifiedTableViewController.swift */; };
+		DAB03BD127A6FDF400A12410 /* NSPredicate+Operator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB03BD027A6FDF400A12410 /* NSPredicate+Operator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		A872A12220E9D88E00ECE2BA /* TasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksViewController.swift; sourceTree = "<group>"; };
 		A8E78FE8241A76EE00E66973 /* AlertController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertController+.swift"; sourceTree = "<group>"; };
 		DAB03BCE27A6B9AF00A12410 /* NotifiedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifiedTableViewController.swift; sourceTree = "<group>"; };
+		DAB03BD027A6FDF400A12410 /* NSPredicate+Operator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSPredicate+Operator.swift"; sourceTree = "<group>"; };
 		F8BE4E97B49FD2484441C139 /* Pods-RealmApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmApp.debug.xcconfig"; path = "Target Support Files/Pods-RealmApp/Pods-RealmApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,6 +98,7 @@
 				A81BC31C256FED21002D9595 /* ViewControllers */,
 				A8969B33270F34B700F7DED0 /* Models */,
 				A8969B34270F34C900F7DED0 /* Services */,
+				DAB03BD227A6FE0500A12410 /* Auxiliary */,
 				A872A10E20E9D82400ECE2BA /* AppDelegate.swift */,
 				A872A11220E9D82400ECE2BA /* Main.storyboard */,
 				A872A11520E9D82600ECE2BA /* Assets.xcassets */,
@@ -120,6 +123,14 @@
 				A804828527103A100095A493 /* StorageManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		DAB03BD227A6FE0500A12410 /* Auxiliary */ = {
+			isa = PBXGroup;
+			children = (
+				DAB03BD027A6FDF400A12410 /* NSPredicate+Operator.swift */,
+			);
+			path = Auxiliary;
 			sourceTree = "<group>";
 		};
 		FDE08A7B9F379500FD75BD4A /* Frameworks */ = {
@@ -251,6 +262,7 @@
 				A804828427103A010095A493 /* DataManager.swift in Sources */,
 				A872A10F20E9D82400ECE2BA /* AppDelegate.swift in Sources */,
 				A804828627103A100095A493 /* StorageManager.swift in Sources */,
+				DAB03BD127A6FDF400A12410 /* NSPredicate+Operator.swift in Sources */,
 				A872A12120E9D87400ECE2BA /* TaskListViewController.swift in Sources */,
 				A872A12320E9D88E00ECE2BA /* TasksViewController.swift in Sources */,
 				DAB03BCF27A6B9AF00A12410 /* NotifiedTableViewController.swift in Sources */,

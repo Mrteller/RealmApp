@@ -31,6 +31,7 @@ class StorageManager {
     
     func delete<T: ObjectBase>(_ item: T) {
         write {
+            // Now child objects are deleted automatically
             //realm.delete(taskList.tasks)
             realm.delete(item)
         }

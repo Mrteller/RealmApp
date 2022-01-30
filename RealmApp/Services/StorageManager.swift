@@ -35,6 +35,14 @@ class StorageManager {
         }
     }
     
+//    func delete<T: ObjectBase>(_ item: T) {
+//        write {
+//            //realm.delete(taskList.tasks)
+//            realm.delete(item)
+//        }
+//    }
+    
+    
     func edit(_ taskList: TaskList, newValue: String) {
         write {
             taskList.name = newValue
@@ -48,9 +56,27 @@ class StorageManager {
     }
 
     // MARK: - Tasks
-    func save(_ task: Task, to taskList: TaskList) {
+    func add(_ task: Task, to taskList: TaskList) {
         write {
             taskList.tasks.append(task)
+        }
+    }
+    
+    func delete(_ task: Task) {
+        write {
+            realm.delete(task)
+        }
+    }
+    
+    func edit(_ task: Task, keyedValues: [String : Any]) {
+        write {
+            task.setValuesForKeys(keyedValues)
+        }
+    }
+
+    func done(_ task: Task) {
+        write {
+            task.isComplete.toggle()
         }
     }
     

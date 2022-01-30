@@ -65,8 +65,8 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
             StorageManager.shared.delete(taskList)
         }
         
-        let editAction = UIContextualAction(style: .normal, title: "Edit") { _, _, isDone in
-            self.showAlert(with: taskList)
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, isDone in
+            self?.showAlert(with: taskList)
             isDone(true)
         }
         
@@ -95,6 +95,7 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
     @IBAction func sortingList(_ sender: UISegmentedControl) {
         resortTaskLists()
     }
+    
     // MARK: - Public funcs
     
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {

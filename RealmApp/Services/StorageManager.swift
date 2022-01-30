@@ -16,36 +16,18 @@ class StorageManager {
     private init() {}
     
     // MARK: - Generic
-//    func add(_ taskLists: [TaskList]) {
-//        try! realm.write {
-//            realm.add(taskLists)
-//        }
-//    }
     
     func add<S: Sequence>(_ objects: S) where S.Iterator.Element: Object {
         try! realm.write {
             realm.add(objects)
         }
     }
-//    func add(_ taskList: TaskList) {
-//        write {
-//            realm.add(taskList)
-//        }
-//    }
-    
-    
+        
     func add<T: Object>(_ item: T) {
         write {
             realm.add(item)
         }
     }
-    
-//    func delete(_ taskList: TaskList) {
-//        write {
-//            //realm.delete(taskList.tasks)
-//            realm.delete(taskList)
-//        }
-//    }
     
     func delete<T: ObjectBase>(_ item: T) {
         write {
@@ -58,16 +40,9 @@ class StorageManager {
         write {
             item.setValuesForKeys(keyedValues)
         }
-        //print(realm.schema.objectSchema.properties)
     }
-    
-//    func edit(_ taskList: TaskList, newValue: String) {
-//        write {
-//            taskList.name = newValue
-//        }
-//    }
 
-    // MARK: - Task List
+    // MARK: - Specific: Task List
     
     func done(_ taskList: TaskList) {
         write {
@@ -75,24 +50,12 @@ class StorageManager {
         }
     }
 
-    // MARK: - Tasks
+    // MARK: - Specific: Tasks
     func add(_ task: Task, to taskList: TaskList) {
         write {
             taskList.tasks.append(task)
         }
     }
-    
-//    func delete(_ task: Task) {
-//        write {
-//            realm.delete(task)
-//        }
-//    }
-    
-//    func edit(_ task: Task, keyedValues: [String : Any]) {
-//        write {
-//            task.setValuesForKeys(keyedValues)
-//        }
-//    }
 
     func done(_ task: Task) {
         write {
@@ -109,6 +72,7 @@ class StorageManager {
             print(error)
         }
     }
+    
 }
 
 

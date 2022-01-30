@@ -12,7 +12,7 @@ class TaskList: Object {
     @Persisted var name = ""
     @Persisted var date = Date()
     @Persisted var tasks = List<Task>()
-    @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted(primaryKey: true) var id: ObjectId // For future use
 }
 
 class Task: EmbeddedObject {

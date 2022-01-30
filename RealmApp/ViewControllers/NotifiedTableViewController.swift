@@ -10,7 +10,11 @@ import RealmSwift
 
 class NotifiedTableViewController: UITableViewController {
     
+    // MARK: - Private vars
+    
     private var notificationToken: NotificationToken?
+    
+    // MARK: - Public funcs
 
     func observeChanges<T>(_ results: Results<T>) {
         notificationToken = results.observe { [weak self] (changes) in
@@ -33,8 +37,12 @@ class NotifiedTableViewController: UITableViewController {
         }
     }
     
-    deinit {
+    func stopObservingChanges() {
         notificationToken?.invalidate()
+    }
+    
+    deinit {
+        stopObservingChanges()
     }
 
 }

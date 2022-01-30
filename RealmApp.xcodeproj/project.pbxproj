@@ -17,7 +17,7 @@
 		A872A11920E9D82600ECE2BA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A872A11720E9D82600ECE2BA /* LaunchScreen.storyboard */; };
 		A872A12120E9D87400ECE2BA /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A872A12020E9D87400ECE2BA /* TaskListViewController.swift */; };
 		A872A12320E9D88E00ECE2BA /* TasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A872A12220E9D88E00ECE2BA /* TasksViewController.swift */; };
-		A8E78FE9241A76EE00E66973 /* AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E78FE8241A76EE00E66973 /* AlertController.swift */; };
+		A8E78FE9241A76EE00E66973 /* AlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E78FE8241A76EE00E66973 /* AlertController+.swift */; };
 		DAB03BCF27A6B9AF00A12410 /* NotifiedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB03BCE27A6B9AF00A12410 /* NotifiedTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,7 +35,7 @@
 		A872A11A20E9D82600ECE2BA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A872A12020E9D87400ECE2BA /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		A872A12220E9D88E00ECE2BA /* TasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksViewController.swift; sourceTree = "<group>"; };
-		A8E78FE8241A76EE00E66973 /* AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertController.swift; sourceTree = "<group>"; };
+		A8E78FE8241A76EE00E66973 /* AlertController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertController+.swift"; sourceTree = "<group>"; };
 		DAB03BCE27A6B9AF00A12410 /* NotifiedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifiedTableViewController.swift; sourceTree = "<group>"; };
 		F8BE4E97B49FD2484441C139 /* Pods-RealmApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmApp.debug.xcconfig"; path = "Target Support Files/Pods-RealmApp/Pods-RealmApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -67,7 +67,7 @@
 				DAB03BCE27A6B9AF00A12410 /* NotifiedTableViewController.swift */,
 				A872A12020E9D87400ECE2BA /* TaskListViewController.swift */,
 				A872A12220E9D88E00ECE2BA /* TasksViewController.swift */,
-				A8E78FE8241A76EE00E66973 /* AlertController.swift */,
+				A8E78FE8241A76EE00E66973 /* AlertController+.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -247,7 +247,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A804828827103BFD0095A493 /* TaskList.swift in Sources */,
-				A8E78FE9241A76EE00E66973 /* AlertController.swift in Sources */,
+				A8E78FE9241A76EE00E66973 /* AlertController+.swift in Sources */,
 				A804828427103A010095A493 /* DataManager.swift in Sources */,
 				A872A10F20E9D82400ECE2BA /* AppDelegate.swift in Sources */,
 				A804828627103A100095A493 /* StorageManager.swift in Sources */,

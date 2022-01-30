@@ -11,10 +11,16 @@ import RealmSwift
 
 class TaskListViewController: NotifiedTableViewController {
     
+    // MARK: - @IBOutlets
+    
     @IBOutlet weak var sortBySegmentedControl: UISegmentedControl!
 
+    // MARK: - Public vars
+    
     var taskLists: Results<TaskList>!
 
+    // MARK: - Private vars
+    
     private var sortProperties: [PartialKeyPath<TaskList>] = [\.date, \.name]
     private var sortAscending = true
     private var sortBy: PartialKeyPath<TaskList> {
@@ -22,7 +28,8 @@ class TaskListViewController: NotifiedTableViewController {
     }
     private var currentTasksPredicate = NSPredicate(format: "%K = %@", argumentArray: ["isComplete", false])
     private var sortDirectionButtonItem: UIBarButtonItem!
-    //private var searchBar = UISearchBar()
+    
+    // MARK: - Lifecycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +71,7 @@ class TaskListViewController: NotifiedTableViewController {
     }
     
     // MARK: - Table View Delegate
+    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let taskList = taskLists[indexPath.row]
         
@@ -88,6 +96,7 @@ class TaskListViewController: NotifiedTableViewController {
     }
     
     // MARK: - Navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let tasksVC = segue.destination as? TasksViewController else { return }
@@ -95,9 +104,13 @@ class TaskListViewController: NotifiedTableViewController {
         tasksVC.taskList = taskList
     }
 
+    // MARK: - @IBActions
+    
     @IBAction func sortingList(_ sender: UISegmentedControl) {
         resortTaskLists()
     }
+    
+    // MARK: - Private funcs
     
     @objc private func addButtonPressed() {
         showAlert()
@@ -116,17 +129,19 @@ class TaskListViewController: NotifiedTableViewController {
     
 }
 
+    // MARK: - Extensions
+
 extension TaskListViewController {
     
     private func showAlert(with taskList: TaskList? = nil) {
         let title = taskList != nil ? "Edit List" : "New List"
         let alert = UIAlertController.createAlert(withTitle: title, andMessage: "Please set title for new task list")
         
-        alert.action(with: taskList) { newValue in
+        alert.action(with: taskList) { newName in
             if let taskList = taskList {
-                StorageManager.shared.edit(taskList, newValue: newValue)
+                StorageManager.shared.edit(taskList, keyedValues: ["name" : newName])
             } else {
-                let taskList = TaskList(value: [newValue])
+                let taskList = TaskList(value: [newName])
                 StorageManager.shared.add(taskList)
             }
         }

@@ -36,30 +36,7 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
         super.viewDidLoad()
         taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
         observeChanges(taskLists)
-        
-        let addButton = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addButtonPressed)
-        )
-        
-        sortDirectionButtonItem = UIBarButtonItem(
-            title: "↑",
-            style: .plain,
-            target: self,
-            action: #selector(sortButtonPressed)
-        )
-        
-        searchBar.delegate = self
-        searchBar.searchBarStyle = .prominent
-        searchBar.placeholder = "Search..."
-        searchBar.isTranslucent = false
-        // searchBar.backgroundImage = UIImage()
-        
-        navigationItem.titleView = searchBar
-        navigationItem.rightBarButtonItems = [editButtonItem, addButton]
-        navigationItem.leftBarButtonItem = sortDirectionButtonItem
-        
+        setupNavBar()
         DataManager.shared.createTempDataV2() { /* Nothing to do in completion. Updates are done via notification. */}
     }
     
@@ -118,6 +95,7 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
     @IBAction func sortingList(_ sender: UISegmentedControl) {
         resortTaskLists()
     }
+    // MARK: - Public funcs
     
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
         if !textSearched.isEmpty {
@@ -130,6 +108,29 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
     }
     
     // MARK: - Private funcs
+    
+    private func setupNavBar() {
+        let addButton = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addButtonPressed)
+        )
+        
+        sortDirectionButtonItem = UIBarButtonItem(
+            title: "↑",
+            style: .plain,
+            target: self,
+            action: #selector(sortButtonPressed)
+        )
+        
+        searchBar.delegate = self
+        searchBar.placeholder = "Search..."
+        searchBar.autocapitalizationType = .none
+        
+        navigationItem.titleView = searchBar
+        navigationItem.rightBarButtonItems = [editButtonItem, addButton]
+        navigationItem.leftBarButtonItem = sortDirectionButtonItem
+    }
     
     @objc private func addButtonPressed() {
         showAlert()

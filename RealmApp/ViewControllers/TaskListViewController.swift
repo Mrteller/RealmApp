@@ -99,7 +99,7 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
         if !textSearched.isEmpty {
-            let predicate = NSPredicate(format:"name CONTAINS[c] %@", textSearched)
+            let predicate = NSPredicate(format:"name CONTAINS[c] %@ OR ANY tasks.name CONTAINS[c] %@", textSearched, textSearched)
             taskLists = StorageManager.shared.realm.objects(TaskList.self).filter(predicate).sorted(byKeyPaths: [(sortBy, sortAscending)])
         } else {
             taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])

@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TasksViewController: UITableViewController {
+class TasksViewController: NotifiedTableViewController {
     
     // MARK: - Public vars
     
@@ -32,6 +32,7 @@ class TasksViewController: UITableViewController {
         title = taskList.name
         currentTasks = taskList.tasks.filter(!isCompletePredicate)
         completedTasks = taskList.tasks.filter(isCompletePredicate)
+        observeChanges(tasksByCategory)
         
         let addButton = UIBarButtonItem(
             barButtonSystemItem: .add,
@@ -72,7 +73,7 @@ class TasksViewController: UITableViewController {
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(task)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+            //tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self]_, _, isDone in
@@ -82,14 +83,14 @@ class TasksViewController: UITableViewController {
         // FIXME: Kext with section indexing. Use cycled `nextIndex` instead.
         let doneAction = UIContextualAction(style: .normal, title:  taskCategoryNames[indexPath.section == 0 ? 1 : 0]) { _, _, isDone in
             StorageManager.shared.done(task)
-            guard let indexPathOfChangedTask = self.indexPath(of: task) else {
-                tableView.reloadData()
-                return
-            }
-            tableView.performBatchUpdates {
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-                tableView.insertRows(at: [indexPathOfChangedTask], with: .automatic)
-            }
+//            guard let indexPathOfChangedTask = self.indexPath(of: task) else {
+//                tableView.reloadData()
+//                return
+//            }
+//            tableView.performBatchUpdates {
+//                tableView.deleteRows(at: [indexPath], with: .automatic)
+//                tableView.insertRows(at: [indexPathOfChangedTask], with: .automatic)
+//            }
             isDone(true)
         }
         
@@ -127,19 +128,19 @@ extension TasksViewController {
         alert.action(with: task) { [unowned self] name, note in
             if let task = task {
                 StorageManager.shared.edit(task, keyedValues: ["name": name, "note": note])
-                guard let indexPathOfChangedTask = self.indexPath(of: task) else {
-                    tableView.reloadData()
-                    return
-                }
-                tableView.reloadRows(at: [indexPathOfChangedTask], with: .automatic)
+//                guard let indexPathOfChangedTask = self.indexPath(of: task) else {
+//                    tableView.reloadData()
+//                    return
+//                }
+//                tableView.reloadRows(at: [indexPathOfChangedTask], with: .automatic)
             } else {
                 let task = Task(value: [name, note])
                 StorageManager.shared.add(task, to: self.taskList)
-                guard let indexPathOfChangedTask = self.indexPath(of: task) else {
-                    tableView.reloadData()
-                    return
-                }
-                tableView.insertRows(at: [indexPathOfChangedTask], with: .automatic)
+//                guard let indexPathOfChangedTask = self.indexPath(of: task) else {
+//                    tableView.reloadData()
+//                    return
+//                }
+//                tableView.insertRows(at: [indexPathOfChangedTask], with: .automatic)
             }
         }
         

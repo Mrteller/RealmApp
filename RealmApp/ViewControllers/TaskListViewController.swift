@@ -35,7 +35,7 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
-        observeChanges(taskLists)
+        observeChanges([taskLists])
         setupNavBar()
         DataManager.shared.createTempDataV2() { /* Nothing to do in completion. Updates are done via notification. */}
     }

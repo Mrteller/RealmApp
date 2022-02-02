@@ -11,7 +11,15 @@ import RealmSwift
 class StorageManager {
     static let shared = StorageManager()
     
-    let realm = try! Realm()
+    let realm: Realm = {
+        // Use specific DB file name instead of `default.realm`
+        let username = "Teller"
+        var config = Realm.Configuration.defaultConfiguration
+        config.fileURL!.deleteLastPathComponent()
+        config.fileURL!.appendPathComponent(username)
+        config.fileURL!.appendPathExtension("realm")
+        return try! Realm(configuration: config)
+    }()
     
     private init() {}
     

@@ -1,15 +1,7 @@
-//
-//  TaskListsViewController.swift
-//  RealmApp
-//
-//  Created by Alexey Efimov on 02.07.2018.
-//  Copyright © 2018 Alexey Efimov. All rights reserved.
-//
-
 import UIKit
 import RealmSwift
 
-class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
+class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBarDelegate {
     
     // MARK: - @IBOutlets
     
@@ -35,26 +27,37 @@ class TaskListViewController: NotifiedTableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
+        
+        diffableDataSource = StringConvertibleSectionTableViewDiffibleDataSource<String, TaskList>(tableView: tableView) { (tableView, indexPath, commit) -> UITableViewCell? in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
+            var content = cell.defaultContentConfiguration()
+            let taskList = self.taskLists[indexPath.row]
+            content.text = taskList.name
+            let currentTasksCount = taskList.tasks.filter(self.currentTasksPredicate).count
+            content.secondaryText = currentTasksCount == 0 ? "✓" : "\(currentTasksCount)"
+            cell.contentConfiguration = content
+            return cell
+        }
         observeChanges(taskLists)
         setupNavBar()
         DataManager.shared.createTempDataV2() { /* Nothing to do in completion. Updates are done via notification. */}
     }
     
     // MARK: - Table view data source
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        taskLists.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
-        var content = cell.defaultContentConfiguration()
-        let taskList = taskLists[indexPath.row]
-        content.text = taskList.name
-        let currentTasksCount = taskList.tasks.filter(currentTasksPredicate).count
-        content.secondaryText = currentTasksCount == 0 ? "✓" : "\(currentTasksCount)"
-        cell.contentConfiguration = content
-        return cell
-    }
+//    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        taskLists.count
+//    }
+//
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
+//        var content = cell.defaultContentConfiguration()
+//        let taskList = taskLists[indexPath.row]
+//        content.text = taskList.name
+//        let currentTasksCount = taskList.tasks.filter(currentTasksPredicate).count
+//        content.secondaryText = currentTasksCount == 0 ? "✓" : "\(currentTasksCount)"
+//        cell.contentConfiguration = content
+//        return cell
+//    }
     
     // MARK: - Table View Delegate
     
@@ -171,3 +174,5 @@ extension TaskListViewController {
     }
     
 }
+
+

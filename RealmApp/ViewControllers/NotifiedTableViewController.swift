@@ -7,30 +7,25 @@
 
 import UIKit
 import RealmSwift
+import SwiftUI
 
-class NotifiedTableViewController: UITableViewController {
+class NotifiedTableViewController<O: Object>: UITableViewController{
+    //typealias O = Object
     
     // MARK: - Private vars
     
+    var diffableDataSource: StringConvertibleSectionTableViewDiffibleDataSource<String, O>!
     private var notificationToken: NotificationToken?
+    var results: Results<O>?
+    var sectionsBy: PartialKeyPath<O>?
     
     // MARK: - Public funcs
 
-    func observeChanges<T>(_ results: Results<T>) {
+    func observeChanges(_ results: Results<O>) {
         notificationToken = results.observe { [weak self] (changes) in
-            guard let tableView = self?.tableView else { return }
             switch changes {
-            case .initial:
-                tableView.reloadData()
-            case .update(_, let deletions, let insertions, let modifications):
-                tableView.performBatchUpdates {
-                    tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
-                        with: .automatic)
-                    tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
-                        with: .automatic)
-                    tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
-                        with: .automatic)
-                }
+            case .initial, .update:
+                self?.generateAndApplySnapshot(results)
             case .error(let error):
                 fatalError("\(error)")
             }
@@ -45,4 +40,23 @@ class NotifiedTableViewController: UITableViewController {
         stopObservingChanges()
     }
 
+    private func generateAndApplySnapshot(_ results: Results<O>) {
+        var snapshot = NSDiffableDataSourceSnapshot<String, O>()
+        if let sectionsBy = sectionsBy {
+            let sections = results.distinct(by: [sectionsBy])
+            print("sections: \(sections)")
+        }
+//        fetchedResultsController.sections?.forEach {
+            snapshot.appendSections(["Section"])
+        snapshot.appendItems(Array(results), toSection: "Section")
+//        }
+        diffableDataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
+}
+
+class StringConvertibleSectionTableViewDiffibleDataSource<UserSection: Hashable, User: Hashable>: UITableViewDiffableDataSource<UserSection, User> where UserSection: CustomStringConvertible {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sectionIdentifier(for: section)?.description
+    }
 }

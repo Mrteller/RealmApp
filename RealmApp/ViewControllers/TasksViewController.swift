@@ -86,10 +86,7 @@ class TasksViewController: UITableViewController {
                 tableView.reloadData()
                 return
             }
-            tableView.performBatchUpdates {
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-                tableView.insertRows(at: [indexPathOfChangedTask], with: .automatic)
-            }
+            tableView.moveRow(at: indexPath, to: indexPathOfChangedTask)
             isDone(true)
         }
         

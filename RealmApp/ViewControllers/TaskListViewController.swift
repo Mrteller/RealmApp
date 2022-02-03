@@ -18,7 +18,7 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
     private var sortBy: PartialKeyPath<TaskList> {
         sortProperties[sortBySegmentedControl.selectedSegmentIndex]
     }
-    private var currentTasksPredicate = NSPredicate(format: "%K = %@", argumentArray: ["isComplete", false])
+    private var currentTasksPredicate = NSPredicate(format: "%K = %@", argumentArray: ["isComplete", false]) // = or ==
     private var sortDirectionButtonItem: UIBarButtonItem!
     private var searchBar = UISearchBar()
     

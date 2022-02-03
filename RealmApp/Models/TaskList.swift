@@ -12,10 +12,16 @@ class TaskList: Object {
     @Persisted var name = ""
     @Persisted var date = Date()
     @Persisted var tasks = List<Task>()
+    //@Persisted var id = UUID() this crashes on deletion
+//    @Persisted var id = UUID().hashValue
+//    
+//    override var hash: Int {
+//        id
+//    }
     //@Persisted(primaryKey: true) var id: ObjectId // For future use
 }
 
-class Task: EmbeddedObject {
+class Task: Object {
     @Persisted var name = ""
     @Persisted var note = ""
     @Persisted var date = Date()

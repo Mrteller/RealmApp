@@ -7,7 +7,6 @@
 
 import UIKit
 import RealmSwift
-import SwiftUI
 
 class NotifiedTableViewController<O: Object>: UITableViewController {
     
@@ -60,12 +59,12 @@ class NotifiedTableViewController<O: Object>: UITableViewController {
                 for section in sections {
                     print("section: \(section)")
                     snapshot.appendSections([section])
-                    let predicate = NSPredicate(format: "%K == %@", argumentArray: ["name", section])
-                    print(predicate)
-                    let items = Array(results.filter(predicate))
-                    snapshot.appendItems(items)
+//                    let predicate = NSPredicate(format: "%K == %@", argumentArray: ["name", section])
+//                    print(predicate)
+//                    let items = Array(results.filter(predicate))
+//                    snapshot.appendItems(items)
                     print(snapshot.itemIdentifiers)
-                    //snapshot.appendItems(Array(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section })), toSection: section)
+                    snapshot.appendItems(Array(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section })), toSection: section)
                 }
             } else {
                 for customSection in customSections {
@@ -78,8 +77,9 @@ class NotifiedTableViewController<O: Object>: UITableViewController {
             snapshot.appendSections([0])
             snapshot.appendItems(Array(results), toSection: 0)
         }
-
-        diffableDataSource?.apply(snapshot, animatingDifferences: true)
+        UIView.animate(withDuration: 3) { [weak self] in
+            self?.diffableDataSource?.apply(snapshot, animatingDifferences: true)
+        }
     }
     
 }

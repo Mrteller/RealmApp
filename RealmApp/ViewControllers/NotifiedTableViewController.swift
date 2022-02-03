@@ -42,19 +42,21 @@ class NotifiedTableViewController<O: Object>: UITableViewController {
     }
     
     private func generateAndApplySnapshot(_ results: Results<O>) {
-        // guard var snapshot = diffableDataSource?.snapshot() else { return }
+        //guard var snapshot = diffableDataSource?.snapshot() else { return }
         var snapshot = NSDiffableDataSourceSnapshot<AnyHashable, O>()
         if let sectionsBy = sectionsBy {
-            //let sections = results.distinct(by: [sectionsBy])
-            var sections = Array(Set(results.compactMap { $0[keyPath: sectionsBy] as? AnyHashable }))
-            // TODO: Think about replacing with sort closure here
-//            if sortSectionsAscending {
-//                sections = sections.sorted(by: <)
-//            } else {
-//                sections = sections.sorted(by: { $0.description > $1.description })
-//            }
-            
             if customSections.isEmpty {
+                //let sections = results.distinct(by: [sectionsBy])
+                var sections = Array(Set(results.compactMap { $0[keyPath: sectionsBy] as? AnyHashable }))
+                //let deletedSections = Array(Set(snapshot.sectionIdentifiers).subtracting(sections))
+//                snapshot.deleteSections(deletedSections)
+//                sectionsToAdd = sections -
+                // TODO: Think about replacing with sort closure here
+                if sortSectionsAscending {
+                    sections = sections.sorted(by: { $0.description > $1.description })
+                } else {
+                    sections = sections.sorted(by: { $0.description < $1.description })
+                }
                 for section in sections {
                     print("section: \(section)")
                     snapshot.appendSections([section])

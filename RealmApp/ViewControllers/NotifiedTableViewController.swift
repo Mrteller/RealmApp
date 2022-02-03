@@ -9,18 +9,19 @@ import UIKit
 import RealmSwift
 import SwiftUI
 
-class NotifiedTableViewController<O: Object>: UITableViewController{
-    //typealias O = Object
+class NotifiedTableViewController<O: Object>: UITableViewController {
     
     // MARK: - Private vars
     
-    var diffableDataSource: StringConvertibleSectionTableViewDiffibleDataSource<String, O>!
+    var diffableDataSource: UITableViewDiffableDataSource<AnyHashable, O>?
     private var notificationToken: NotificationToken?
-    var results: Results<O>?
+    //var results: Results<O>?
     var sectionsBy: PartialKeyPath<O>?
+    var sortSectionsAscending = true
+    var customSections = [AnyHashable : AnyHashable]()
     
     // MARK: - Public funcs
-
+    
     func observeChanges(_ results: Results<O>) {
         notificationToken = results.observe { [weak self] (changes) in
             switch changes {
@@ -39,24 +40,45 @@ class NotifiedTableViewController<O: Object>: UITableViewController{
     deinit {
         stopObservingChanges()
     }
-
+    
     private func generateAndApplySnapshot(_ results: Results<O>) {
-        var snapshot = NSDiffableDataSourceSnapshot<String, O>()
+        // guard var snapshot = diffableDataSource?.snapshot() else { return }
+        var snapshot = NSDiffableDataSourceSnapshot<AnyHashable, O>()
         if let sectionsBy = sectionsBy {
-            let sections = results.distinct(by: [sectionsBy])
-            print("sections: \(sections)")
+            //let sections = results.distinct(by: [sectionsBy])
+            var sections = Array(Set(results.compactMap { $0[keyPath: sectionsBy] as? AnyHashable }))
+            // TODO: Think about replacing with sort closure here
+//            if sortSectionsAscending {
+//                sections = sections.sorted(by: <)
+//            } else {
+//                sections = sections.sorted(by: { $0.description > $1.description })
+//            }
+            
+            if customSections.isEmpty {
+                for section in sections {
+                    print("section: \(section)")
+                    snapshot.appendSections([section])
+                    let predicate = NSPredicate(format: "%K == %@", argumentArray: ["name", section])
+                    print(predicate)
+                    let items = Array(results.filter(predicate))
+                    snapshot.appendItems(items)
+                    print(snapshot.itemIdentifiers)
+                    //snapshot.appendItems(Array(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section })), toSection: section)
+                }
+            } else {
+                for customSection in customSections {
+                    snapshot.appendSections([customSection.value])
+                    snapshot.appendItems(Array(results.filter( { $0[keyPath: sectionsBy] as! AnyHashable == customSection.key })), toSection: customSection.value)
+                }
+            }
+            
+        } else {
+            snapshot.appendSections([0])
+            snapshot.appendItems(Array(results), toSection: 0)
         }
-//        fetchedResultsController.sections?.forEach {
-            snapshot.appendSections(["Section"])
-        snapshot.appendItems(Array(results), toSection: "Section")
-//        }
-        diffableDataSource.apply(snapshot, animatingDifferences: true)
+
+        diffableDataSource?.apply(snapshot, animatingDifferences: true)
     }
     
 }
 
-class StringConvertibleSectionTableViewDiffibleDataSource<UserSection: Hashable, User: Hashable>: UITableViewDiffableDataSource<UserSection, User> where UserSection: CustomStringConvertible {
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionIdentifier(for: section)?.description
-    }
-}

@@ -28,10 +28,11 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
         super.viewDidLoad()
         taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
         
-        diffableDataSource = StringConvertibleSectionTableViewDiffibleDataSource<String, TaskList>(tableView: tableView) { (tableView, indexPath, commit) -> UITableViewCell? in
+        sectionsBy = \.name
+        diffableDataSource = StringConvertibleSectionTableViewDiffibleDataSource<AnyHashable, TaskList>(tableView: tableView) { (tableView, indexPath, taskList) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
             var content = cell.defaultContentConfiguration()
-            let taskList = self.taskLists[indexPath.row]
+            //let taskList = self.taskLists[indexPath.row]
             content.text = taskList.name
             let currentTasksCount = taskList.tasks.filter(self.currentTasksPredicate).count
             content.secondaryText = currentTasksCount == 0 ? "✓" : "\(currentTasksCount)"
@@ -62,7 +63,7 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let taskList = taskLists[indexPath.row]
+        guard let taskList = diffableDataSource?.itemIdentifier(for: indexPath) else { return UISwipeActionsConfiguration(actions: [])}
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(taskList)
@@ -148,7 +149,9 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
     private func resortTaskLists() {
         sortDirectionButtonItem.title = sortAscending ? "↑" : "↓"
         taskLists = taskLists.sorted(byKeyPaths: [(sortBy, sortAscending)])
-        tableView.reloadSections([0], with: .middle)
+        //tableView.reloadSections([0], with: .middle)
+        sortSectionsAscending.toggle()
+        observeChanges(taskLists)
     }
     
 }
@@ -176,3 +179,8 @@ extension TaskListViewController {
 }
 
 
+class StringConvertibleSectionTableViewDiffibleDataSource<UserSection: Hashable, User: Hashable>: UITableViewDiffableDataSource<UserSection, User> where UserSection: CustomStringConvertible {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sectionIdentifier(for: section)?.description
+    }
+}

@@ -33,7 +33,7 @@ class TasksViewController: NotifiedTableViewController<Task> {
             var content = cell.defaultContentConfiguration()
             //let taskList = self.taskLists[indexPath.row]
             content.text = task.name
-            content.secondaryText = task.note
+            content.secondaryText = task.hashValue.description
             cell.contentConfiguration = content
             return cell
         }

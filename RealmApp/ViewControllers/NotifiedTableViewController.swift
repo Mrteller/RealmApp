@@ -67,7 +67,7 @@ class NotifiedTableViewController<O: Object>: UITableViewController {
                     snapshot.appendItems(Array(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section })), toSection: section)
                 }
             } else {
-                for customSection in customSections {
+                for customSection in customSections.sorted(by: { $0.value.description > $1.value.description }) {
                     snapshot.appendSections([customSection.value])
                     snapshot.appendItems(Array(results.filter( { $0[keyPath: sectionsBy] as! AnyHashable == customSection.key })), toSection: customSection.value)
                 }

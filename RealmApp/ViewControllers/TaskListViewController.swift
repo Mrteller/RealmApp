@@ -35,7 +35,8 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
             //let taskList = self.taskLists[indexPath.row]
             content.text = taskList.name
             let currentTasksCount = taskList.tasks.filter(self.currentTasksPredicate).count
-            content.secondaryText = currentTasksCount == 0 ? "✓" : "\(currentTasksCount)"
+            cell.accessoryType = currentTasksCount == 0 ? .checkmark : .none
+            content.secondaryText = taskList.hashValue.description
             cell.contentConfiguration = content
             return cell
         }
@@ -90,7 +91,7 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let tasksVC = segue.destination as? TasksViewController else { return }
-        let taskList = taskLists[indexPath.row]
+        let taskList = diffableDataSource?.itemIdentifier(for: indexPath)
         tasksVC.taskList = taskList
     }
 

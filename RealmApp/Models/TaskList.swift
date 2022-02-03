@@ -8,7 +8,7 @@
 
 import RealmSwift
 
-class TaskList: Object {
+class TaskList: Object, Identifiable {
     @Persisted var name = ""
     @Persisted var date = Date()
     @Persisted var tasks = List<Task>()
@@ -22,7 +22,7 @@ class TaskList: Object {
     @Persisted(primaryKey: true) var id = UUID()
 }
 
-class Task: Object {
+class Task: Object, Identifiable {
     @Persisted var name = ""
     @Persisted var note = ""
     @Persisted var date = Date()

@@ -8,11 +8,20 @@
 import UIKit
 import RealmSwift
 
-class NotifiedTableViewController<O: Object>: UITableViewController {
+struct OID<O: Identifiable & Equatable>: Hashable {
+    var object: O
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(object.id)
+    }
+}
+
+class NotifiedTableViewController<O: Object & Identifiable>: UITableViewController {
     
     // MARK: - Private vars
+
     
-    var diffableDataSource: UITableViewDiffableDataSource<AnyHashable, O>?
+    var diffableDataSource: UITableViewDiffableDataSource<AnyHashable, OID<O>>?
     private var notificationToken: NotificationToken?
     //var results: Results<O>?
     var sectionsBy: PartialKeyPath<O>?
@@ -42,7 +51,7 @@ class NotifiedTableViewController<O: Object>: UITableViewController {
     
     private func generateAndApplySnapshot(_ results: Results<O>) {
         //guard var snapshot = diffableDataSource?.snapshot() else { return }
-        var snapshot = NSDiffableDataSourceSnapshot<AnyHashable, O>()
+        var snapshot = NSDiffableDataSourceSnapshot<AnyHashable, OID<O>>()
         if let sectionsBy = sectionsBy {
             if customSections.isEmpty {
                 //let sections = results.distinct(by: [sectionsBy])
@@ -63,19 +72,21 @@ class NotifiedTableViewController<O: Object>: UITableViewController {
 //                    print(predicate)
 //                    let items = Array(results.filter(predicate))
 //                    snapshot.appendItems(items)
-                    print(snapshot.itemIdentifiers)
-                    snapshot.appendItems(Array(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section })), toSection: section)
+                    //print(snapshot.itemIdentifiers)
+                    snapshot.appendItems(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section }).map{ OID(object: $0) }, toSection: section)
                 }
             } else {
                 for customSection in customSections.sorted(by: { $0.value.description > $1.value.description }) {
                     snapshot.appendSections([customSection.value])
-                    snapshot.appendItems(Array(results.filter( { $0[keyPath: sectionsBy] as! AnyHashable == customSection.key })), toSection: customSection.value)
+                    let items = Array(results.filter( { $0[keyPath: sectionsBy] as! AnyHashable == customSection.key }).map{ OID(object: $0) })
+                    print(items)
+                    snapshot.appendItems(items, toSection: customSection.value)
                 }
             }
             
         } else {
             snapshot.appendSections([0])
-            snapshot.appendItems(Array(results), toSection: 0)
+            snapshot.appendItems(results.map{ OID(object: $0) }, toSection: 0)
         }
         UIView.animate(withDuration: 3) { [weak self] in
             self?.diffableDataSource?.apply(snapshot, animatingDifferences: true)

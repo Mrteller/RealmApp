@@ -29,10 +29,10 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
         taskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPaths: [(sortBy, sortAscending)])
         
         sectionsBy = \.name
-        diffableDataSource = StringConvertibleSectionTableViewDiffibleDataSource<AnyHashable, TaskList>(tableView: tableView) { (tableView, indexPath, taskList) -> UITableViewCell? in
+        diffableDataSource = StringConvertibleSectionTableViewDiffibleDataSource<AnyHashable, OID<TaskList>>(tableView: tableView) { (tableView, indexPath, taskListID) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
             var content = cell.defaultContentConfiguration()
-            //let taskList = self.taskLists[indexPath.row]
+            let taskList = taskListID.object
             content.text = taskList.name
             let currentTasksCount = taskList.tasks.filter(self.currentTasksPredicate).count
             cell.accessoryType = currentTasksCount == 0 ? .checkmark : .none
@@ -64,7 +64,7 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let taskList = diffableDataSource?.itemIdentifier(for: indexPath) else { return UISwipeActionsConfiguration(actions: [])}
+        guard let taskList = diffableDataSource?.itemIdentifier(for: indexPath)?.object else { return UISwipeActionsConfiguration(actions: [])}
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(taskList)
@@ -91,7 +91,7 @@ class TaskListViewController: NotifiedTableViewController<TaskList>, UISearchBar
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let tasksVC = segue.destination as? TasksViewController else { return }
-        let taskList = diffableDataSource?.itemIdentifier(for: indexPath)
+        let taskList = diffableDataSource?.itemIdentifier(for: indexPath)?.object
         tasksVC.taskList = taskList
     }
 

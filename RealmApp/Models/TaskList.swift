@@ -18,7 +18,8 @@ class TaskList: Object {
 //    override var hash: Int {
 //        id
 //    }
-    //@Persisted(primaryKey: true) var id: ObjectId // For future use
+    //@Persisted(primaryKey: true) var id: ObjectId // ObjectId crashes on deletion with diffable datasource
+    @Persisted(primaryKey: true) var id = UUID()
 }
 
 class Task: Object {
@@ -29,4 +30,5 @@ class Task: Object {
     //@Persisted(originProperty: "tasks") var taskList: LinkingObjects<TaskList>
     // EmbeddedObject with primary key crashes
     // @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted(primaryKey: true) var id = UUID()
 }

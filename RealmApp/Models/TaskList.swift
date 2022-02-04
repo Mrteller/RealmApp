@@ -32,3 +32,11 @@ class Task: Object, Identifiable {
     // @Persisted(primaryKey: true) var id: ObjectId
     @Persisted(primaryKey: true) var id = UUID()
 }
+
+struct TaskStruct: Identifiable {
+    let name = ""
+    let note = ""
+    let date = Date()
+    let isComplete = false
+    let id = UUID()
+}

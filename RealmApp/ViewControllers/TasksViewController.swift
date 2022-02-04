@@ -28,10 +28,11 @@ class TasksViewController: NotifiedTableViewController<Task> {
         title = taskList.name
         customSections = [false: "Current", true : "Complete"]
         sectionsBy = \.isComplete
-        diffableDataSource = StringConvertibleSectionTableViewDiffibleDataSource<AnyHashable, OID<Task>>(tableView: tableView) { (tableView, indexPath, taskOID) -> UITableViewCell? in
+        diffableDataSource = StringConvertibleSectionTableViewDiffibleDataSource<AnyHashable, Task.ID>(tableView: tableView) { [weak self] (tableView, indexPath, taskID) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(withIdentifier: "TasksCell", for: indexPath)
             var content = cell.defaultContentConfiguration()
-            let task = taskOID.object
+            //let task = taskOID.object
+            guard let task = self?.tasks.first(where: { $0.id == taskID }) else { return cell } 
             content.text = task.name
             content.secondaryText = task.hashValue.description
             cell.contentConfiguration = content
@@ -52,7 +53,8 @@ class TasksViewController: NotifiedTableViewController<Task> {
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let task = diffableDataSource?.itemIdentifier(for: indexPath)?.object else { return UISwipeActionsConfiguration(actions: [])}
+        guard let taskID = diffableDataSource?.itemIdentifier(for: indexPath) else { return UISwipeActionsConfiguration(actions: [])}
+        let task = tasks.first(where: { $0.id == taskID })!
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(task)

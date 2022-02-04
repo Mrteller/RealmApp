@@ -32,8 +32,9 @@ class TasksViewController: NotifiedTableViewController<Task> {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TasksCell", for: indexPath)
             var content = cell.defaultContentConfiguration()
             //let task = taskOID.object
-            guard let task = self?.tasks.first(where: { $0.id == taskID }) else { return cell } 
+            guard let task = self?.tasks.first(where: { $0.id == taskID }) else { return cell }
             content.text = task.name
+            print(content.text)
             content.secondaryText = task.hashValue.description
             cell.contentConfiguration = content
             return cell

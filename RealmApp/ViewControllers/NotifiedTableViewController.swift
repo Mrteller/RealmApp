@@ -8,13 +8,13 @@
 import UIKit
 import RealmSwift
 
-struct OID<O: Identifiable & Equatable>: Hashable {
-    var object: O
-    var id: O.ID { object.id }
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(object.id)
-    }
-}
+//struct OID<O: Identifiable & Equatable>: Hashable {
+//    var object: O
+//    var id: O.ID { object.id }
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(object.id)
+//    }
+//}
 
 class NotifiedTableViewController<O: Object & Identifiable>: UITableViewController {
     
@@ -88,9 +88,11 @@ class NotifiedTableViewController<O: Object & Identifiable>: UITableViewControll
             snapshot.appendSections([0])
             snapshot.appendItems(results.map(\.id), toSection: 0)
         }
-        UIView.animate(withDuration: 3) { [weak self] in
-            self?.diffableDataSource?.apply(snapshot, animatingDifferences: true)
-        }
+//        UIView.animate(withDuration: 3) { [weak self] in
+            self.diffableDataSource?.apply(snapshot, animatingDifferences: true) {
+                self.diffableDataSource?.applySnapshotUsingReloadData(snapshot)
+            }
+//        }
     }
     
 }

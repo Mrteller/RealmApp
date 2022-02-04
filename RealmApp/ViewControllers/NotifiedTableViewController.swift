@@ -73,24 +73,31 @@ class NotifiedTableViewController<O: Object & Identifiable>: UITableViewControll
 //                    let items = Array(results.filter(predicate))
 //                    snapshot.appendItems(items)
                     //print(snapshot.itemIdentifiers)
-                    snapshot.appendItems(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section }).map(\.id), toSection: section)
+                    //snapshot.appendItems(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section }).map(\.id), toSection: section)
+                    let items = Array(results.filter( { ($0[keyPath: sectionsBy] as! AnyHashable) == section }).map(\.id))
+                    snapshot.appendItems(items, toSection: section)
+                    snapshot.reloadItems(items)
                 }
             } else {
+                // TODO: Replace hardcoded sorting
                 for customSection in customSections.sorted(by: { $0.value.description > $1.value.description }) {
                     snapshot.appendSections([customSection.value])
                     let items = Array(results.filter( { $0[keyPath: sectionsBy] as! AnyHashable == customSection.key }).map(\.id))
                     print(items)
                     snapshot.appendItems(items, toSection: customSection.value)
+                    snapshot.reloadItems(items)
                 }
             }
             
         } else {
             snapshot.appendSections([0])
-            snapshot.appendItems(results.map(\.id), toSection: 0)
+            let items = Array(results.map(\.id))
+            snapshot.appendItems(items, toSection: 0)
+            snapshot.reloadItems(items)
         }
 //        UIView.animate(withDuration: 3) { [weak self] in
             diffableDataSource?.apply(snapshot, animatingDifferences: true) {
-                self.diffableDataSource?.applySnapshotUsingReloadData(snapshot)
+//                self.diffableDataSource?.applySnapshotUsingReloadData(snapshot)
             }
 //        }
     }

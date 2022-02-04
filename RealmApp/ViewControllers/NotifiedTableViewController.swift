@@ -89,7 +89,7 @@ class NotifiedTableViewController<O: Object & Identifiable>: UITableViewControll
             snapshot.appendItems(results.map(\.id), toSection: 0)
         }
 //        UIView.animate(withDuration: 3) { [weak self] in
-            self.diffableDataSource?.apply(snapshot, animatingDifferences: true) {
+            diffableDataSource?.apply(snapshot, animatingDifferences: true) {
                 self.diffableDataSource?.applySnapshotUsingReloadData(snapshot)
             }
 //        }

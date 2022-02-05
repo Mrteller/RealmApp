@@ -54,8 +54,10 @@ class TasksViewController: NotifiedTableViewController<Task> {
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let taskID = diffableDataSource?.itemIdentifier(for: indexPath) else { return UISwipeActionsConfiguration(actions: [])}
-        let task = tasks.first(where: { $0.id == taskID })!
+        guard let taskID = diffableDataSource?.itemIdentifier(for: indexPath),
+              let task = tasks.first(where: { $0.id == taskID })
+        else { return UISwipeActionsConfiguration(actions: [])}
+        
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(task)

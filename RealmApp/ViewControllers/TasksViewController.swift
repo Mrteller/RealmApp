@@ -1,11 +1,3 @@
-//
-//  TasksViewController.swift
-//  RealmApp
-//
-//  Created by Alexey Efimov on 02.07.2018.
-//  Copyright © 2018 Alexey Efimov. All rights reserved.
-//
-
 import UIKit
 import RealmSwift
 
@@ -18,6 +10,7 @@ class TasksViewController: NotifiedTableViewController<Task> {
     
     // MARK: - Private vars
     
+    // FIXME: Exclude this, because we have `customSections`
     private let taskCategoryNames = ["Current", "Completed"]
 
     
